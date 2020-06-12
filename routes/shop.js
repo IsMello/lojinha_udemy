@@ -1,14 +1,9 @@
-const path = require('path')
-
 const express = require('express')
 
-const rootDir = require('../util/path')
+const productsController = require('../controllers/product')
 
 const router = express.Router()
 
-router.get('/', (req, res, next) => {
-  // use path.join to create path that work all OS
-  res.sendFile(path.join(rootDir, 'views', 'shop.html'))
-})
+router.get('/', productsController.getShowProducts)
 
 module.exports = router
