@@ -20,6 +20,6 @@ app.use('/admin', adminRoutes)
 app.use(shopRoutes)
 
 app.use(notFoundController.pageNotFound)
-console.log('oi Thais tudo bem')
+//console.log('oi Thais tudo bem')
 
 app.listen(3000)
