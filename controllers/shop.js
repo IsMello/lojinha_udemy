@@ -4,27 +4,28 @@ const Cart = require('../models/cart')
 exports.getShowProducts = (req, res, next) => {
   Product.fetchAll((products) => {
     res.render('shop/product-list', {
-      prods: products,
+      products: products,
       pageTitle: 'Shop',
       path: '/products'
     })
   })
 }
 
-exports.getProduct = (req,res, next) => {
-  const prodId = req.params.productId;
+exports.getProduct = (req, res, next) => {
+  const prodId = req.params.productId
   Product.findById(prodId, product => {
     res.render('shop/product-detail', {
-      product: product, 
+      product: product,
       pageTitle: product.title,
-      path: '/products'})
+      path: '/products'
+    })
   })
 }
 
 exports.getIndex = (req, res, next) => {
   Product.fetchAll((products) => {
     res.render('shop/index', {
-      prods: products,
+      products: products,
       pageTitle: 'All products',
       path: '/'
     })

@@ -15,7 +15,7 @@ exports.pushProduct = (req, res, next) => {
   const description = req.body.description
   const product = new Product(title, imageUrl, price, description)
   product.save()
-  res.redirect('/')
+  res.redirect('/admin/products')
 }
 
 exports.getEditProduct = (req, res, next) => {
@@ -40,7 +40,7 @@ exports.getEditProduct = (req, res, next) => {
 exports.getProducts = (req, res) => {
   Product.fetchAll(products => {
     res.render('admin/products', {
-      prods: products,
+      products: products,
       pageTitle: 'Admin Products',
       path: '/admin/products'
     })
