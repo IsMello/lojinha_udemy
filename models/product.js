@@ -45,7 +45,7 @@ module.exports = class Product {
     })
   }
 
-  static deletById (id) {
+  static deleteById (id) {
     getProductsFromFile(products => {
       const product = products.find(product => product.id === id)
       const updatedProducts = products.filter(product => product.id !== id)
