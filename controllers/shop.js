@@ -49,7 +49,6 @@ exports.getCart = (req, res, next) => {
         pageTitle: 'Your Cart',
         products: cartProducts
       })
-      console.log(cartProducts)
     })
   })
 }
@@ -64,7 +63,6 @@ exports.postCart = (req, res, next) => {
 
 exports.postCartDeleteProduct = (req, res, next) => {
   const productId = req.body.productId
-  console.log('productId:', productId)
   Product.findById(productId, product => {
     Cart.deleteProduct(productId, product.price)
     res.redirect('/cart')
