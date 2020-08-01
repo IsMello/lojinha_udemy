@@ -1,6 +1,8 @@
 const path = require('path')
 const express = require('express')
 const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
+require('dotenv').config()
 
 const app = express()
 
@@ -11,16 +13,15 @@ const adminRoutes = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
 
 const notFoundController = require('./controllers/notFound')
-const mongoConnect = require('./util/database').mongoConnect
 const User = require('./models/user')
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use((req, res, next) => {
-  User.findById('5f20d9593db4ce70107177ac')
+  User.findById('5f24d7bd0884be72c64610eb')
     .then(user => {
-      req.user = new User(user.name, user.email, user.cart, user._id)
+      req.user = user
       next()
     })
     .catch(err => console.log(err))
@@ -32,6 +33,25 @@ app.use(shopRoutes)
 
 app.use(notFoundController.pageNotFound)
 
-mongoConnect(() => {
-  app.listen(3000)
-})
+mongoose
+  .connect(
+    process.env.MONGODB_URL
+  )
+  .then(result => {
+    User.findOne().then(user => {
+      if (!user) {
+        const user = new User({
+          name: 'Thais',
+          email: 'thais@mail.com',
+          cart: {
+            items: []
+          }
+        })
+        user.save()
+      }
+    })
+    app.listen(3000)
+  })
+  .catch(err => {
+    console.log(err)
+  })
