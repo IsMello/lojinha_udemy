@@ -1,8 +1,28 @@
-const Sequelize = require('sequelize')
+const mongodb = require('mongodb')
+const MongoClient = mongodb.MongoClient
 
-const sequelize = new Sequelize('node-complete', 'root', 'T1n1nh@1313', {
-  dialect: 'mysql',
-  host: 'localhost'
-})
+let _db
 
-module.exports = sequelize
+const mongoConnect = callback => {
+  MongoClient.connect(
+    '',
+    { useUnifiedTopology: true }
+  )
+    .then(client => {
+      console.log('Connected!')
+      _db = client.db()
+      callback()
+    })
+    .catch(err => {
+      console.log(err)
+      throw err
+    })
+}
+const getDb = () => {
+  if (_db) {
+    return _db
+  }
+}
+
+exports.mongoConnect = mongoConnect
+exports.getDb = getDb
