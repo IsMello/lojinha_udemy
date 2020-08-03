@@ -11,6 +11,7 @@ app.set('views', 'views')
 
 const adminRoutes = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
+const authRoutes = require('./routes/auth')
 
 const notFoundController = require('./controllers/notFound')
 const User = require('./models/user')
@@ -30,6 +31,7 @@ app.use((req, res, next) => {
 // ordem nao importa por causa do método que esta sendo usado
 app.use('/admin', adminRoutes)
 app.use(shopRoutes)
+app.use(authRoutes)
 
 app.use(notFoundController.pageNotFound)
 
