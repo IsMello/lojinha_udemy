@@ -55,14 +55,14 @@ exports.getCart = (req, res, next) => {
     .then(user => {
       const products = user.cart.items
       let total = 0
-      for (var i = 0; i < req.user.cart.items.length; i++) {
-        total += (req.user.cart.items[i].productId.price * req.user.cart.items[i].quantity)
+      for (const product of products) {
+        total += (product.productId.price * product.quantity)
       }
       res.render('shop/cart', {
         path: '/cart',
         pageTitle: 'Your Cart',
         products: products,
-        total: total,
+        total: Math.round(total * 100) / 100,
         isAuthenticated: req.session.isLoggedIn
       })
     })
