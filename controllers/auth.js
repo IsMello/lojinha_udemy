@@ -10,7 +10,7 @@ exports.getLogin = (req, res, next) => {
 }
 
 exports.postLogin = (req, res, next) => {
-  User.findById('5f24d7bd0884be72c64610eb')
+  User.findOne()
     .then(user => {
       req.session.isLoggedIn = true
       req.session.user = user
