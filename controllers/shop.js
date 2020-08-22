@@ -54,10 +54,15 @@ exports.getCart = (req, res, next) => {
     .execPopulate()
     .then(user => {
       const products = user.cart.items
+      let total = 0
+      for (var i = 0; i < req.user.cart.items.length; i++) {
+        total += (req.user.cart.items[i].productId.price * req.user.cart.items[i].quantity)
+      }
       res.render('shop/cart', {
         path: '/cart',
         pageTitle: 'Your Cart',
         products: products,
+        total: total,
         isAuthenticated: req.session.isLoggedIn
       })
     })
