@@ -104,12 +104,17 @@ exports.postOrder = (req, res, next) => {
       const products = user.cart.items.map(item => {
         return { quantity: item.quantity, product: { ...item.productId._doc } }
       })
+      let total = 0
+      for (const product of products) {
+        total += (product.product.price * product.quantity)
+      }
       const order = new Order({
         user: {
           name: req.user.name,
           userId: req.user
         },
-        products: products
+        products: products,
+        total: Math.round(total * 100) / 100
       })
       return order.save()
     })
