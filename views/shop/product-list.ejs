@@ -12,6 +12,7 @@
                             <%- include('../includes/product-card.ejs', {product: product}) %>
                             <% } %>
                     </div>
+                    <%- include('../includes/pagination.ejs', {currentPage: currentPage, hasNextPage: hasNextPage, nextPage: nextPage, hasPreviousPage: hasPreviousPage, lastPage: lastPage}) %>
                     <% } else { %>
                         <h1>No Products Found!</h1>
                         <% } %>

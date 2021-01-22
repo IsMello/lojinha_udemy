@@ -1,5 +1,5 @@
 <%- include('../includes/head.ejs') %>
-    <link rel="stylesheet" href="/css/product.css">
+<link rel="stylesheet" href="/css/product.css">
 </head>
 
 <body>
@@ -7,13 +7,14 @@
 
     <main>
         <% if (products.length > 0) { %>
-            <div class="grid">
-                <% for (let product of products) { %>
-                    <%- include('../includes/product-card.ejs', {product: product}) %>
-                <% } %>
-            </div>
+        <div class="grid">
+            <% for (let product of products) { %>
+            <%- include('../includes/product-card.ejs', {product: product}) %>
+            <% } %>
+        </div>
+        <%- include('../includes/pagination.ejs', {currentPage: currentPage, hasNextPage: hasNextPage, nextPage: nextPage, hasPreviousPage: hasPreviousPage, lastPage: lastPage}) %>
         <% } else { %>
-            <h1>No Products Found!</h1>
+        <h1>No Products Found!</h1>
         <% } %>
     </main>
-<%- include('../includes/end.ejs') %>
+    <%- include('../includes/end.ejs') %>
