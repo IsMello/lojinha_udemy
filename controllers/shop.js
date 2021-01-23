@@ -4,6 +4,7 @@ const fs = require('fs')
 const path = require('path')
 const PDFDocument = require('pdfkit')
 const ITEMS_PER_PAGE = 1
+const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 exports.getShowProducts = (req, res, next) => {
   const page = +req.query.page || 1
@@ -137,7 +138,85 @@ exports.postCartDeleteProduct = (req, res, next) => {
     })
 }
 
-exports.postOrder = (req, res, next) => {
+exports.getCheckout = (req, res, next) => {
+  let products
+  let total = 0
+  req.user
+    .populate('cart.items.productId')
+    .execPopulate()
+    .then(user => {
+      products = user.cart.items
+      for (const product of products) {
+        total += (product.productId.price * product.quantity)
+      }
+
+      return stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: products.map(p => {
+          return {
+            name: p.productId.title,
+            description: p.productId.description,
+            amount: p.productId.price * 100,
+            currency: 'usd',
+            quantity: p.quantity
+          }
+        }),
+        success_url: req.protocol + '://' + req.get('host') + '/checkout/success',
+        cancel_url: req.protocol + '://' + req.get('host') + '/checkout/cancel'
+      })
+    })
+    .then(session => {
+      res.render('shop/checkout', {
+        path: '/checkout',
+        pageTitle: 'Checkout',
+        products: products,
+        total: Math.round(total * 100) / 100,
+        sessionId: session.id
+      })
+    })
+    .catch(err => {
+      const error = new Error(err)
+      error.httpStatusCode = 500
+      return next(error)
+    })
+}
+
+// exports.postOrder = (req, res, next) => {
+//   req.user
+//     .populate('cart.items.productId')
+//     .execPopulate()
+//     .then(user => {
+//       const products = user.cart.items.map(item => {
+//         return { quantity: item.quantity, product: { ...item.productId._doc } }
+//       })
+//       let total = 0
+//       for (const product of products) {
+//         total += product.product.price * product.quantity
+//       }
+//       const order = new Order({
+//         user: {
+//           email: req.user.email,
+//           userId: req.user
+//         },
+//         products: products,
+//         total: Math.round(total * 100) / 100
+//       })
+//       return order.save()
+//     })
+//     .then(result => {
+//       return req.user.clearCart()
+//     })
+//     .then(result => {
+//       res.redirect('/orders')
+//     })
+//     .catch(err => {
+//       const error = new Error(err)
+//       error.httpStatusCode = 500
+//       return next(error)
+//     })
+// }
+
+exports.getCheckoutSuccess = (req, res, next) => {
   req.user
     .populate('cart.items.productId')
     .execPopulate()
@@ -147,7 +226,7 @@ exports.postOrder = (req, res, next) => {
       })
       let total = 0
       for (const product of products) {
-        total += product.product.price * product.quantity
+        total += (product.product.price * product.quantity)
       }
       const order = new Order({
         user: {
