@@ -1,4 +1,5 @@
 const path = require('path')
+// const https = require('https')
 const express = require('express')
 const bodyParser = require('body-parser')
 const multer = require('multer')
@@ -8,6 +9,10 @@ const MongoDBStore = require('connect-mongodb-session')(session)
 const csrf = require('csurf')
 const flash = require('connect-flash')
 require('dotenv').config()
+const helmet = require('helmet')
+const compression = require('compression')
+const morgan = require('morgan')
+const fs = require('fs')
 
 const app = express()
 const store = new MongoDBStore({
@@ -16,6 +21,10 @@ const store = new MongoDBStore({
 })
 
 const csrfProtection = csrf()
+
+// const privateKey = fs.readFileSync('server.key')
+// const certificate = fs.readFileSync('server.cert')
+
 const fileStorage = multer.diskStorage({
   destination: (req, file, callback) => {
     callback(null, 'images')
@@ -35,13 +44,21 @@ const fileFilter = (req, file, callback) => {
     callback(null, false)
   }
 }
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, 'access.log'),
+  { flags: 'a' }
+)
 
 app.set('view engine', 'ejs')
 app.set('views', 'views')
+app.use(morgan('combined', { stream: accessLogStream }))
 
 const adminRoutes = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
 const authRoutes = require('./routes/auth')
+
+app.use(helmet())
+app.use(compression())
 
 const errorController = require('./controllers/error')
 const User = require('./models/user')
@@ -107,6 +124,9 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(process.env.MONGODB_URL)
   .then(result => {
+    // https.
+    // createServer({key: privateKey, cert: certificate}, app).
+    // listen(3000)
     app.listen(3000)
   })
   .catch(err => {
