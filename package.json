@@ -1,7 +1,7 @@
 {
   "name": "loja_udemy",
   "version": "1.0.0",
-  "description": "",
+  "description": "lojinha",
   "main": "app.js",
   "engines": {
     "node":"14.15.4"
